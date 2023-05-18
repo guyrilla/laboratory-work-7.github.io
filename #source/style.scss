@@ -7,17 +7,25 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    
 }
 .main-board {
-    width: 505px;
+    width: 504px;
     height: 505px;
-    border: 2px solid black;
     font-size: 0;
     &__cell {
         font-size: 14px;
         width: 20px;
         height: 20px;
-        border: 1px solid black;
         display: inline-block;
     }
+}
+.border{
+    position: absolute;
+    top: 49%;
+    left: 49%;
+    transform: translate(-50%, -50%);
+    width: 466px;
+    height: 460px;
+    border: 2px solid red;   
 }

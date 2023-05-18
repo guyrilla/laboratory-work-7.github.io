@@ -1,9 +1,13 @@
+var Direction = 'right';
 var SnakeLenght = 1;//отвечает за длину змеи
-var Head = 0;//отвечает за индекс массива, в котором находится 
-var X_axis = {value: 1};
-var Y_axis = {value: 1};
+var Head = 0;
+document.addEventListener('keydown',keyPress);
+var yAxis = {value: 1};
+var xAxis = {value: 1};
+var MoveAnimation;
+var SnakeSpeed = 100;
 var SnakePosition = [];
-SnakePosition[Head] = [X_axis,Y_axis];
+SnakePosition[Head] = [xAxis,yAxis];
 const Cells = document.getElementsByClassName("main-board__cell");
 var cellElement;
 let BoardSections = [];
@@ -21,18 +25,27 @@ for(let i = 0; i < 25; i++)
     {
         if(i === 0 || i === 24)
         {
-            BoardSections[i][j] = 3;//устанавливает нижнюю и верхнюю границу в значение 2
+            BoardSections[i][j] = 4;//устанавливает нижнюю и верхнюю границу в значение 4
         }
-        else if(i > 0 && i < 25 && j >= 1 && j !== 24) 
+        if(i > 1 && i < 24 && j > 1 && j < 24) 
         {
             BoardSections[i][j] = 0;//устанавливает клетки поля, не включая границы ,в значение 0
         }
-        else if(i > 0 && i < 25 && (j === 0 || j === 24))
+        if(i === 1 || i === 23)
         {
-            BoardSections[i][j] = 3;//устаналивливает боковые границы в значение 3
-        };
+            BoardSections[i][j] = 3;//устанавливает пограничные клетки в значение 3 снизу и сверху
+        }
+        if(i > 1 && i < 24 && (j === 1 || j === 23))
+        {
+            BoardSections[i][j] = 3;//устаналивливает пограничные клетки границы в значение 3
+        }
+        if(i > 0 && i < 25 && (j === 0 || j === 24))
+        {
+            BoardSections[i][j] = 4;//устаналивливает боковые границы в значение 4
+        }
     }
 }
+
 function ClearData()//очищает все значения при старте игры
 {
     SnakeLenght = 1;
@@ -40,29 +53,147 @@ function ClearData()//очищает все значения при старте
     X_axis = 1;
     Y_axis = 1;
     SnakePosition = [];
-    SnakePosition[Head] = [X_axis,Y_axis];
+    SnakePosition[Head] = [];
 
 }
 function StartGame()//запускает нашу игру
 {
-    ClearData();
+    MoveAnimation = setInterval(() => Move(xAxis,yAxis),SnakeSpeed);
 }
-function MoveUp(xAxis,yAxis)
+
+function Move(X_axis,Y_axis)
 {
-    let Move = true;
-    while(Move === true)
+    if(Direction === 'right')
     {
         let cellElement;
-        cellElement = Cells[yAxis.value * 25 + xAxis.value];
-        cellElement.style.backgroundColor = "red";
-        yAxis.value -= 1;
-        cellElement = Cells[yAxis.value * 25 + xAxis.value];
-        cellElement.style.backgroundColor = "white";
-        switch(BoardSections[yAxis.value][xAxis.value])
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
         {
-            case 3:
-                Move = false;
+            BoardSections[Y_axis.value][X_axis.value] = 1;
+        }
+        cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+        cellElement.style.backgroundColor = "white";
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 0;
+        }
+        X_axis.value += 1;
+        cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+        cellElement.style.backgroundColor = "red";
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 1;
+        }
+        switch(BoardSections[Y_axis.value][X_axis.value])
+        {
+            case 4:
+                cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+                cellElement.style.backgroundColor = "white";
                 GameOver();
+                break;
+            case 3:
+                break;
+            case 2:
+                SnakeGrown();
+                break;
+        }
+    }
+
+    if(Direction === 'left')
+    {
+        let cellElement;
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 1;
+        }
+        cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+        cellElement.style.backgroundColor = "white";
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 0;
+        }
+        X_axis.value -= 1;
+        cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+        cellElement.style.backgroundColor = "red";
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 1;
+        }
+        switch(BoardSections[Y_axis.value][X_axis.value])
+        {
+            case 4:
+                cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+                cellElement.style.backgroundColor = "white";
+                GameOver();
+                break;
+            case 3:
+                break;
+            case 2:
+                SnakeGrown();
+                break;
+        }
+    }
+    if(Direction === 'up')
+    {
+        let cellElement;
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 1;
+        }
+        cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+        cellElement.style.backgroundColor = "white";
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 0;
+        }
+        Y_axis.value -= 1;
+        cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+        cellElement.style.backgroundColor = "red";
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 1;
+        }
+        switch(BoardSections[Y_axis.value][X_axis.value])
+        {
+            case 4:
+                cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+                cellElement.style.backgroundColor = "white";
+                GameOver();
+                break;
+            case 3:
+                break;
+            case 2:
+                SnakeGrown();
+                break;
+        }
+    }
+    if(Direction === 'down')
+    {
+        let cellElement;
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 1;
+        }
+        cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+        cellElement.style.backgroundColor = "white";
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 0;
+        }
+        Y_axis.value += 1;
+        cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+        cellElement.style.backgroundColor = "red";
+        if(BoardSections[Y_axis.value][X_axis.value] == 0 || BoardSections[Y_axis.value][X_axis.value] == 3)
+        {
+            BoardSections[Y_axis.value][X_axis.value] = 1;
+        }
+        switch(BoardSections[Y_axis.value][X_axis.value])
+        {
+            case 4:
+                cellElement = Cells[Y_axis.value * 25 + X_axis.value];
+                cellElement.style.backgroundColor = "white";
+                GameOver();
+                break;
+            case 3:
                 break;
             case 2:
                 SnakeGrown();
@@ -70,87 +201,67 @@ function MoveUp(xAxis,yAxis)
         }
     }
 }
-function MoveDown(xAxis,yAxis)
+
+
+
+function keyPress(event)
 {
-    let Move = true;
-    let i = 0;
-    while(Move === true && i != 10)
+    var key = event.key;
+    switch(key)
     {
-        i += 1;
-        let cellElement;
-        cellElement = Cells[yAxis.value * 25 + xAxis.value];
-        cellElement.style.backgroundColor = "white";
-        yAxis.value += 1;
-        cellElement = Cells[yAxis.value * 25 + xAxis.value];
-        cellElement.style.backgroundColor = "red";
-        switch(BoardSections[yAxis.value][xAxis.value])
-        {
-            case 3:
-                Move = false;
-                GameOver();
-                break;
-            case 2:
-                SnakeGrown();
-                break;
-        }
+        case 'w':
+            TurnUp();
+            break;
+        case 'a':
+            TurnLeft();
+            break;
+        case 's':
+            TurnDown();
+            break;
+        case 'd':
+            TurnRight();
+            break;
     }
 }
-function MoveLeft(xAxis,yAxis)
+
+
+
+function TurnUp()
 {
-    let Move = true;
-    let i = 0;
-    while(Move === true && i != 3)
-    {
-        i += 1;
-        let cellElement;
-        cellElement = Cells[yAxis.value * 25 + xAxis.value];
-        cellElement.style.backgroundColor = "white";
-        xAxis.value -= 1;
-        cellElement = Cells[yAxis.value * 25 + xAxis.value];
-        cellElement.style.backgroundColor = "red";
-        switch(BoardSections[yAxis.value][xAxis.value])
-        {
-            case 3:
-                Move = false;
-                GameOver();
-                break;
-            case 2:
-                SnakeGrown();
-                break;
-        }
-    }
+    Direction = 'up';
+    return Direction;
 }
-function MoveRight(xAxis,yAxis)
-{   
-    let Move = true;
-    let i = 0;
-    while(Move === true && i != 5)
-    {
-        i += 1;
-        let cellElement;
-        cellElement = Cells[yAxis.value * 25 + xAxis.value];
-        cellElement.style.backgroundColor = "white";
-        xAxis.value += 1;
-        cellElement = Cells[yAxis.value * 25 + xAxis.value];
-        cellElement.style.backgroundColor = "red";
-        switch(BoardSections[yAxis.value][xAxis.value])
-        {
-            case 3:
-                Move = false;
-                GameOver();
-                break;
-            case 2:
-                SnakeGrown();
-                break;
-        }
-    }
+function TurnLeft()
+{
+    Direction = 'left';
+    return Direction;
 }
+function TurnDown()
+{
+    Direction = 'down';
+    return Direction;
+}
+function TurnRight()
+{
+    Direction = 'right';
+    return Direction;
+}
+
+
+
+
+
+
+
 function SnakeGrown()
 {
 
 }
+
 function GameOver()
 {
+    clearInterval(MoveAnimation);
+    ClearData();
     console.log("Вы проиграли");
 }
-console.log("X_axis после сдвига змейки =" + " " + X_axis.value);
+StartGame();
