@@ -6,12 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
-    <title>SnakeGame</title>
+    <title>SquareGame</title>
 </head>
 <body>
+    <div class="score-box score-box--positioned">
+        <div class="score-box__score-number">
+            <p class="score-box__number">
+                0
+            </p>
+        </div>
+        <p class="score-box__text">
+            Score
+        </p>
+    </div>
     <div class="container">
-        <div class="border"></div>
+        <div class="border">
+        </div>
             <div class="main-board">
+                <div class="menu menu--positioned">
+                    <p class="menu__text">
+                        Начать игру?
+                    </p>
+                    <button class="menu__button">
+                        Начать
+                    </button>
+                </div>
                 <div class="main-board__cell"></div>
                 <div class="main-board__cell"></div>
                 <div class="main-board__cell"></div>
