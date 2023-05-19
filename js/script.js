@@ -542,6 +542,18 @@ function keyPress(event)
         case 'd':
             TurnRight();
             break;
+        case 'ц':
+            TurnUp();
+            break;
+        case 'ф':
+            TurnLeft();
+            break;
+        case 'ы':
+            TurnDown();
+            break;
+        case 'в':
+            TurnRight();
+            break;
     }
 }
 
